@@ -19,5 +19,5 @@ public interface NoticeDao {
 
 	public Notice getNotice(String seq) throws ClassNotFoundException, SQLException;
 
-	public void insertAndPointUpOfMember(Notice n, String uid);
+	public void insertAndPointUpOfMember(Notice n, String uid) throws ClassNotFoundException, SQLException;
 }

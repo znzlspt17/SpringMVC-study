@@ -70,20 +70,23 @@ public class NLNoticeDao extends JdbcDaoSupport implements NoticeDao {
 		});
 	}
 
+	@Transactional
 	public int insert(Notice n) throws ClassNotFoundException, SQLException {
 		String sql = "INSERT INTO NOTICES(\"SEQ\", \"TITLE\", \"CONTENT\", \"WRITER\", \"REGDATE\", \"HIT\", \"FILESRC\") "
 				+ "VALUES( (SELECT MAX(TO_NUMBER(\"SEQ\"))+1 FROM NOTICES), :title, 'newlec', :content, SYSDATE, 0, ?)";
-		return getJdbcTemplate().update(sql, n.getTitle(), n.getContent(), n.getFileSrc());
+
+		int result = getJdbcTemplate().update(sql, n.getTitle(), n.getContent(), n.getFileSrc());
+
+		String sqlPoint = "UPDATE \"MEMBER\" SET POINT = POINT + 1 WHERE \"UID\" = ?";
+		getJdbcTemplate().update(sqlPoint, "newlec");
+
+		return result;
 	}
 
 	@Transactional
-	public void insertAndPointUpOfMember(Notice n, String uid) {
-		String sql = "INSERT INTO NOTICES(\"SEQ\", \"TITLE\", \"CONTENT\", \"WRITER\", \"REGDATE\", \"HIT\", \"FILESRC\") "
-				+ "VALUES( (SELECT MAX(TO_NUMBER(\"SEQ\"))+1 FROM NOTICES), ?, ?, 'newlec', SYSDATE, 0, ?)";
-		String sqlPoint = "UPDATE \"MEMBER\" SET POINT = POINT + 1 WHERE \"UID\" = ?";
-
-		getJdbcTemplate().update(sql, n.getTitle(), n.getContent(), n.getFileSrc());
-		getJdbcTemplate().update(sqlPoint, uid);
+	public void insertAndPointUpOfMember(Notice n, String uid) throws ClassNotFoundException, SQLException {
+		insert(n);
+		insert(n);
 
 		// transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 		//

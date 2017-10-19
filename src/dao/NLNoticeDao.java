@@ -18,9 +18,9 @@ public class NLNoticeDao extends JdbcDaoSupport implements NoticeDao {
 
 	private TransactionTemplate transactionTemplate;
 
-	public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
-		this.transactionTemplate = transactionTemplate;
-	}
+	// PUBLIC VOID SETTRANSACTIONTEMPLATE(TRANSACTIONTEMPLATE TRANSACTIONTEMPLATE) {
+	// THIS.TRANSACTIONTEMPLATE = TRANSACTIONTEMPLATE;
+	// }
 
 	public int getCount(String field, String query) throws ClassNotFoundException, SQLException {
 		String sql = "SELECT COUNT(*) CNT FROM NOTICES WHERE " + field + " LIKE ?";

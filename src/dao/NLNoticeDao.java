@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -75,18 +76,22 @@ public class NLNoticeDao extends JdbcDaoSupport implements NoticeDao {
 		return getJdbcTemplate().update(sql, n.getTitle(), n.getContent(), n.getFileSrc());
 	}
 
-	public void insertAndPointUpOfMember(final Notice n, final String uid) {
+	@Transactional
+	public void insertAndPointUpOfMember(Notice n, String uid) {
 		String sql = "INSERT INTO NOTICES(\"SEQ\", \"TITLE\", \"CONTENT\", \"WRITER\", \"REGDATE\", \"HIT\", \"FILESRC\") "
-				+ "VALUES( (SELECT MAX(TO_NUMBER(\"SEQ\"))+1 FROM NOTICES), ?, 'newlec', ?, SYSDATE, 0, ?)";
+				+ "VALUES( (SELECT MAX(TO_NUMBER(\"SEQ\"))+1 FROM NOTICES), ?, ?, 'newlec', SYSDATE, 0, ?)";
 		String sqlPoint = "UPDATE \"MEMBER\" SET POINT = POINT + 1 WHERE \"UID\" = ?";
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		getJdbcTemplate().update(sql, n.getTitle(), n.getContent(), n.getFileSrc());
+		getJdbcTemplate().update(sqlPoint, uid);
 
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus arg0) {
-				getJdbcTemplate().update(sql, n.getTitle(), n.getContent(), n.getFileSrc());
-				getJdbcTemplate().update(sqlPoint, uid);
-			}
-		});
+		// transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		//
+		// @Override
+		// protected void doInTransactionWithoutResult(TransactionStatus arg0) {
+		// getJdbcTemplate().update(sql, n.getTitle(), n.getContent(), n.getFileSrc());
+		// getJdbcTemplate().update(sqlPoint, uid);
+		// }
+		// });
 	}
 }

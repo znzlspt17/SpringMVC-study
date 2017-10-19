@@ -25,13 +25,33 @@
 		<property name="transactionManager" ref="transactionManager"></property>
 	</bean>
 
-	<bean name="noticeDao" class="dao.NLNoticeDao">
+	<bean name="noticeDaoImp" class="dao.NLNoticeDao">
 		<property name="dataSource" ref="dataSource"></property>
 		<property name="transactionTemplate" ref="transactionTemplate"></property>
 	</bean>
 
 	<bean name="memberDao" class="dao.NLMemberDao">
 		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<bean name="transactionInterceptor"
+		class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<property name="transactionManager" ref="transactionManager"></property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="insertAndPointUpOfMember"></prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- proxy -->
+	<bean name="noticeDao" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="target" ref="noticeDaoImp"></property> 
+		<property name="interceptorNames">
+			<list>
+				<value>transactionInterceptor</value>
+			</list>
+		</property>
 	</bean>
 
 </beans>

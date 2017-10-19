@@ -19,19 +19,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.springframework.web.servlet.ModelAndView;
-
-import dao.NLNoticeDao;
+import dao.NoticeDao;
 import vo.Notice;
 
 @Controller
 @RequestMapping("/customer/*")
 public class CustomerController {
 
-	private NLNoticeDao noticeDao;
+	private NoticeDao noticeDao;
 
 	@Autowired
-	public void setNoticeDao(NLNoticeDao noticeDao) {
+	public void setNoticeDao(NoticeDao noticeDao) {
 		this.noticeDao = noticeDao;
 	}
 
